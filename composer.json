@@ -1,0 +1,30 @@
+{
+    "name": "savphp/sav-blog-demo",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jetiny",
+            "email": "86267344@qq.com"
+        }
+    ],
+    "scripts": {
+        "test": "kahlan",
+        "cov": "kahlan --coverage=3",
+        "covd": "kahlan --coverage=4"
+    },
+    "autoload":{
+        "psr-4":{
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "savphp/sav": "dev-master",
+        "illuminate/database": "^5.5",
+        "predis/predis": "^1.1"
+    },
+    "require-dev": {
+        "kahlan/kahlan": "^4.0"
+    }
+}
