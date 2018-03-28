@@ -3,12 +3,10 @@
 class Account {
   public function login($ctx)
   {
-    $viewCount = $ctx->redis->hget("views", $ctx->route["path"]);
-    require_once(__DIR__ . "/../views/login.php");
+    return $ctx->view("login", ["title" => "登录..."]);
   }
   public function register($ctx)
   {
-    $viewCount = $ctx->redis->hget("views", $ctx->route["path"]);
-    require_once(__DIR__ . "/../views/register.php");
+    return $ctx->view("register");
   }
 }

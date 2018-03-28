@@ -16,11 +16,11 @@ $sav = new Sav([
   "contractFile" => __DIR__ . "/../contract/contract.php"
 ]);
 
-$sav->register('conf', function ($ctx) {
+$sav->prop('conf', function ($ctx) {
   return include_once(__DIR__ . "/../config.php");
 });
 
-$sav->register('redis', function ($ctx) {
+$sav->prop('redis', function ($ctx) {
   $redis = new Predis\Client($ctx->conf["redis"]);
   if ($ctx->route) { // 页面访问次数统计
     $path = $ctx->route["path"];
@@ -29,7 +29,7 @@ $sav->register('redis', function ($ctx) {
   return $redis;
 });
 
-$sav->register('db', function ($ctx) {
+$sav->prop('db', function ($ctx) {
   $db = new Capsule();
   $db->setFetchMode(\PDO::FETCH_ASSOC);
   $db->addConnection($ctx->conf["db"]);
@@ -37,7 +37,7 @@ $sav->register('db', function ($ctx) {
   return $db;
 });
 
-$sav->register('blade', function ($ctx) {
+$sav->prop('blade', function ($ctx) {
   $container = new Container();
   $container->bindIf('files', function () {
       return new Filesystem;
@@ -49,11 +49,22 @@ $sav->register('blade', function ($ctx) {
       return $ctx->conf["blade"];
   }, true);
   (new ViewServiceProvider($container))->register();
-  return $container['view'];
+
+  $view = $container['view'];
+  $view->share('title', "HELLO");
+  $view->share('viewCount', 0);
+  if ($ctx->route) { // 加入标题
+    $title = isset($ctx->route["opts"]['title']) ? $ctx->route["opts"]['title'] : 'sav-blog-demo';
+    $view->share('title', $title);
+    $viewCount = $ctx->redis->hget("views", $ctx->route["path"]);
+    $view->share('viewCount', $viewCount);
+  }
+  return $view;
 });
 
-$sav->register('view', function ($ctx) {
-  return function ($view, $data = [], $mergeData = []) use($ctx) {
+$sav->method('view', function ($ctx) {
+  return function ($view, $data = [], $mergeData = []) use ($ctx) {
+    $ctx->blade->share($ctx->all());
     return $ctx->blade->make($view, $data, $mergeData)->render();
   };
 });
