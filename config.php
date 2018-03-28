@@ -11,5 +11,11 @@ return [
     'charset'   => 'utf8mb4',
     'collation' => 'utf8mb4_general_ci',
     'prefix'    => '',
+  ],
+  "blade" => [
+    "view.paths" => [
+      __DIR__ . '/views/'
+    ],
+    "view.compiled" => __DIR__ . "/cache/"
   ]
 ];
